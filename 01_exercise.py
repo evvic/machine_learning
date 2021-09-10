@@ -1,4 +1,5 @@
 # run py script through terminal with '/bin/python3'
+# Eric Brown
 
 # Ex 1. Print
 print('Hello World')

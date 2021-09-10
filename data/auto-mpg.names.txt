@@ -1,0 +1,9 @@
+mpg
+cylinders
+displacement
+horsepower
+weight
+acceleration
+model year
+origin
+car name
