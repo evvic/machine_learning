@@ -56,3 +56,4 @@ seaborn.lmplot(x="weight", y="mpg", data=df)
 # the shaded area around the regression line is the confidence interval of the regression estimates
 
 plt.show()
+
