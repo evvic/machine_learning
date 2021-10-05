@@ -2,6 +2,7 @@
 # Eric Brown
 
 ### Ex1. Read in the winequality data attached to this exercise
+from os import register_at_fork
 import pandas as pd
 
 df = pd.read_csv('data/winequality-red.csv', sep=';')
@@ -44,33 +45,34 @@ def RidgeRegError(alpha=1.0):
     
     X, y = df['quality'].values.reshape(-1, 1), df.values[:, -1]
 
-    #X.info
-    print('X info')
-    print(type(X))
-    print(X)
+    # print('X info')
+    # print(X)
 
-    print('y info')
-    print(type(y))
-    print(y)
+    # print('y info')
+    # print(y)
 
     # define model
     model = Ridge(alpha=alpha)
     model.fit(X, y)
     # define model evaluation method
     cv = RepeatedKFold(n_splits=10, n_repeats=1, random_state=1)
+
+    pred = model.predict(X)
+    print("prediction:")
+    print(pred)
+
     # evaluate model
     scores = cross_val_score(model, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1)
-
-    print(scores)
+    # print(scores)
 
     r2scores = cross_val_score(model, X, y, scoring='r2', cv=cv, n_jobs=-1)
-
-    print(r2scores)
+    # print(r2scores)
 
     # force scores to be positive
     scores = absolute(scores)
     print('Mean MAE: %.3f (%.3f)' % (mean(scores), std(scores)))
 
+#          [MAEs,   r-squared]
     return [scores, r2scores]
 
 ret = RidgeRegError()
@@ -81,4 +83,40 @@ print(ret)
 ### Ex4. Test different values of alpha for the ridge regression model
 # Draw boxplots of the maes and r2s for three different values of alpha: 1, 10, 100.
 
+print(ret[0])
 
+alphas = [1, 10, 100]
+for a in alphas:
+    ret = RidgeRegError(a)
+
+    rotated = []
+    for i in range(len(ret[0])):
+        rotated += [[ret[0][i], ret[1][i]]]
+
+    # print("rotated array")
+    # print(rotated)
+
+    seaborn.boxplot(data=pd.DataFrame(rotated, columns = ['MAE', 'r-squared']))
+
+    plt.show()
+
+### Ex5. Explain:
+# coefficient of determination (r2)
+definition = '''
+The coefficeint of determination (r-squared) is used to analyze how altering one variable can
+affect a second variable. Such as having a direct relation to influencing the result.
+'''
+print(definition)
+
+# alpha
+definition = '''
+Ridge regression uses a penaulting/tuning parameter known as alpha. Alpha is a control parameter,
+which determines how much tuning is applied to coeffecients in the ridge regression.'''
+print(definition)
+
+### Ex6. Write a brief conclusion about the prediction task.
+summary = '''
+This prediction task using different red wines and their attributes to guage their quality is very 
+interesting as I myself am interested in the the results. The Ridge regression model is used to 
+predict the quality of a wine by it's other attributes such as alcohol percentage, acidity, residual
+sugar, etc...'''
