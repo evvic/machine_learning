@@ -1,0 +1,12 @@
+school
+Mjob
+goout
+freetime
+sex
+Dalc
+famrel
+schoolsup
+address
+G2
+studytime
+G3

@@ -28,19 +28,21 @@ data = pd.read_csv("data/student-mat.csv", sep=";")
 
 #ex04
 
+accuracy = 0.0
+
 # NOTE: what not to use: absences, (G1, G2 because they are too easy),
 
 # filter to only desired attributes
-data = data[["G3", "G1", "G2", "activities", "paid", "studytime", "Dalc", "Fedu", "Medu",  "famsup", "higher",
-    "Pstatus" ]]
+data = data[["school", "Mjob", "goout", "freetime", "sex", "Dalc", "famrel", "schoolsup", "address",
+  "G2", "studytime", "G3" ]]
 
-data['activities'] = data['activities'].map({'yes': 1, 'no': 0})
-data['paid'] = data['paid'].map({'yes': 1, 'no': 0})
-#data['schoolsup'] = data['schoolsup'].map({'yes': 1, 'no': 0})
-data['famsup'] = data['famsup'].map({'yes': 1, 'no': 0})
-data['higher'] = data['higher'].map({'yes': 1, 'no': 0})
-#data['internet'] = data['internet'].map({'yes': 1, 'no': 0})
-data['Pstatus'] = data['Pstatus'].map({'T': 1, 'A': 0})
+# make data numeric
+data['school'] = data['school'].map({'GP': 1, 'MS': 0})
+data['Mjob'] = data['Mjob'].map({'teacher': 5, 'health': 4, 'services': 3, 'at_home': 2, 'other': 1})
+data['sex'] = data['sex'].map({'F': 1, 'M': 0})
+data['schoolsup'] = data['schoolsup'].map({'yes': 1, 'no': 0})
+data['address'] = data['address'].map({'U': 1, 'R': 0})
+
 # set predict to the attribute we are trying to predict: final grade (G3)
 predict = "G3"
 
@@ -58,9 +60,13 @@ for col in data.columns:
 #######################
 # PREPROCESS THE DATA #
 #######################
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(data.drop([predict], 1))
 
 # drop the predict value fro the remaining attributes/features
-X = np.array(data.drop([predict], 1))
+X = np.array(scaled_features)
 
 # assign the predict value to the y label(s)
 y = np.array(data[predict])
@@ -87,13 +93,20 @@ for x in range(len(predictions)):
     else:
         print(predictions[x].round(), '\t', y_test[x], "\tX   \t", x_test[x])
 
-# get score of how correct the model was
+# get score of how correct the linear model was
 acc = linear.score(x_test, y_test)
-print("accuracy: ", acc)
+print("linear accuracy: ", acc)
 
 ########################
 # APPLY ML METHODS 2/2 #
 ########################
+from sklearn.linear_model import Ridge
+
+ridge = Ridge().fit(x_train, y_train)
+
+# get score of how correct the ridge model was
+acc = ridge.score(x_test, y_test)
+print("ridge accuracy: ", acc)
 
 # use a second method here????
 
